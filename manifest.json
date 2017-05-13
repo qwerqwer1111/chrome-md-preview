@@ -1,0 +1,19 @@
+{
+  "name": "chrome-md-preview",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "chrome-md-preview",
+  "content_scripts": [
+    {
+      "matches": [
+        "file://*/*.md*"
+      ],
+      "js": [
+        "js/bundle.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    "js/mathjax/*"
+  ]
+}
