@@ -40,15 +40,11 @@ function render(text) {
     }
   }).use(new MarkdownItMathjax());
 
-  $('#markdown').html(md.render(text));
-  $('#markdown-update').text(new Date().getTime().toString());
+  $(document.body).html(md.render(text));
+  document.body.dispatchEvent(new CustomEvent('MarkdownUpdated'));
 }
 
 (() => {
-  let prevText = $(document.body).text();
-
-  $(document.body).text('');
-
   $('<script>')
     .attr('type', 'text/x-mathjax-config')
     .html(`MathJax.Hub.Config(${JSON.stringify(MATHJAX_CONFIG)});`)
@@ -59,34 +55,27 @@ function render(text) {
     .attr('src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'))
     .appendTo($(document.head));
 
-  $('<div>')
-    .attr('id', 'markdown')
-    .addClass('markdown-body')
-    .appendTo($(document.body));
-
-  $('<div>')
-    .attr('id', 'markdown-update')
-    .hide()
-    .appendTo($(document.body));
-
   const enqueueFn = () => {
-    document.getElementById('markdown-update')
-      .addEventListener('DOMSubtreeModified', () => {
-        if ((typeof window.MathJax !== 'undefined')
-          && (typeof window.MathJax.Hub !== 'undefined')) {
-          window.MathJax.Hub.Queue([
-            'Typeset',
-            window.MathJax.Hub,
-            document.getElementById('markdown')
-          ]);
-        }
-      });
+    document.body.addEventListener('MarkdownUpdated', () => {
+      if ((typeof window.MathJax !== 'undefined')
+        && (typeof window.MathJax.Hub !== 'undefined')) {
+        window.MathJax.Hub.Queue([
+          'Typeset',
+          window.MathJax.Hub,
+          document.body
+        ]);
+      }
+    });
   };
 
   $('<script>')
     .attr('type', 'text/javascript')
     .html(`(${enqueueFn.toString()})()`)
-    .appendTo($(document.body));
+    .appendTo($(document.head));
+
+  $(document.body).addClass('markdown-body');
+
+  let prevText = $(document.body).text();
 
   render(prevText);
 
