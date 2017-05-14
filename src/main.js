@@ -1,8 +1,9 @@
-import 'github-markdown-css/github-markdown.css';
-import hljs from 'highlight.js/lib';
-import 'highlight.js/styles/github-gist.css';
 import MarkdownIt from 'markdown-it';
 import MarkdownItMathjax from 'markdown-it-mathjax';
+import MarkdownItTaskLists from 'markdown-it-task-lists';
+import hljs from 'highlight.js/lib';
+import 'github-markdown-css/github-markdown.css';
+import 'highlight.js/styles/github-gist.css';
 import './main.css';
 
 const MATHJAX_CONFIG = {
@@ -38,7 +39,9 @@ function render(text) {
       }
       return '';
     }
-  }).use(new MarkdownItMathjax());
+  })
+    .use(new MarkdownItMathjax())
+    .use(MarkdownItTaskLists);
 
   $(document.body).html(md.render(text));
   document.body.dispatchEvent(new CustomEvent('MarkdownUpdated'));
