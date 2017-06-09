@@ -2,7 +2,7 @@
   "name": "chrome-md-preview",
   "version": "0.0.1",
   "scripts": {
-    "build": "./node_modules/.bin/webpack -p --colors --progress"
+    "build": "webpack -p --colors --progress"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
