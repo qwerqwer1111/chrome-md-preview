@@ -1,7 +1,5 @@
 import * as MarkdownIt from 'markdown-it';
 import * as hljs from 'highlight.js';
-import 'github-markdown-css/github-markdown.css';
-import 'highlight.js/styles/github-gist.css';
 import './main.css';
 
 const MATHJAX_CONFIG = {
@@ -26,25 +24,23 @@ const MATHJAX_CONFIG = {
 };
 
 function render(text: string): void {
-  const mdOptions: MarkdownIt.Options = {
+  const options: MarkdownIt.Options = {
     html: true,
     linkify: true,
     highlight: (str, lang) => {
       if (lang && hljs.getLanguage(lang)) {
         try {
           return hljs.highlight(lang, str).value;
-        } catch (__) {
-        }
+        } catch (__) {}
       }
       return '';
     }
   };
 
-  const md = new MarkdownIt(mdOptions)
+  document.body.innerHTML = new MarkdownIt(options)
     .use(require('markdown-it-mathjax')())
-    .use(require('markdown-it-task-lists'));
-
-  document.body.innerHTML = md.render(text);
+    .use(require('markdown-it-task-lists'))
+    .render(text);
 
   document.body.dispatchEvent(new CustomEvent('MarkdownUpdated'));
 }
