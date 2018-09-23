@@ -57,19 +57,17 @@ function render(text: string): void {
     'src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'));
   document.head.appendChild(mathjaxScript);
 
-  const mathjaxUpdateScript = document.createElement('script');
-  mathjaxUpdateScript.setAttribute('type', 'text/javascript');
-  mathjaxUpdateScript.innerHTML = `
-(
-  function () {
-    document.body.addEventListener('MarkdownUpdated', function () {
+  const mathjaxQueueFn = () => {
+    document.body.addEventListener('MarkdownUpdated', () => {
       if (typeof window.MathJax !== 'undefined' && typeof window.MathJax.Hub !== 'undefined') {
         window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, document.body]);
       }
     });
-  }
-)();
-  `;
+  };
+
+  const mathjaxUpdateScript = document.createElement('script');
+  mathjaxUpdateScript.setAttribute('type', 'text/javascript');
+  mathjaxUpdateScript.innerHTML = `(${mathjaxQueueFn.toString()})();`;
   document.head.appendChild(mathjaxUpdateScript);
 
   document.body.classList.add('markdown-body');
