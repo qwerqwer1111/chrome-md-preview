@@ -1,7 +1,5 @@
-import MarkdownIt from 'markdown-it';
-import MarkdownItMathjax from 'markdown-it-mathjax';
-import MarkdownItTaskLists from 'markdown-it-task-lists';
-import hljs from 'highlight.js/lib';
+import * as MarkdownIt from 'markdown-it';
+import * as hljs from 'highlight.js';
 import 'github-markdown-css/github-markdown.css';
 import 'highlight.js/styles/github-gist.css';
 import './main.css';
@@ -22,28 +20,32 @@ const MATHJAX_CONFIG = {
   TeX: {
     Macros: {
       argmax: ['\\mathop{\\mathrm{argmax}}\\limits'],
-      argmin: ['\\mathop{\\mathrm{argmin}}\\limits'],
+      argmin: ['\\mathop{\\mathrm{argmin}}\\limits']
     }
   }
 };
 
-function render(text) {
-  const md = new MarkdownIt({
+function render(text: string): void {
+  const mdOptions: MarkdownIt.Options = {
     html: true,
     linkify: true,
     highlight: (str, lang) => {
       if (lang && hljs.getLanguage(lang)) {
         try {
           return hljs.highlight(lang, str).value;
-        } catch (__) {}
+        } catch (__) {
+        }
       }
       return '';
     }
-  })
-    .use(new MarkdownItMathjax())
-    .use(MarkdownItTaskLists);
+  };
+
+  const md = new MarkdownIt(mdOptions)
+    .use(require('markdown-it-mathjax')())
+    .use(require('markdown-it-task-lists'));
 
   document.body.innerHTML = md.render(text);
+
   document.body.dispatchEvent(new CustomEvent('MarkdownUpdated'));
 }
 
@@ -59,17 +61,19 @@ function render(text) {
     'src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'));
   document.head.appendChild(mathjaxScript);
 
-  const enqueueFn = () => {
-    document.body.addEventListener('MarkdownUpdated', () => {
+  const mathjaxUpdateScript = document.createElement('script');
+  mathjaxUpdateScript.setAttribute('type', 'text/javascript');
+  mathjaxUpdateScript.innerHTML = `
+(
+  function () {
+    document.body.addEventListener('MarkdownUpdated', function () {
       if (typeof window.MathJax !== 'undefined' && typeof window.MathJax.Hub !== 'undefined') {
         window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, document.body]);
       }
     });
-  };
-
-  const mathjaxUpdateScript = document.createElement('script');
-  mathjaxUpdateScript.setAttribute('type', 'text/javascript');
-  mathjaxUpdateScript.innerHTML = `(${enqueueFn.toString()})();`;
+  }
+)();
+  `;
   document.head.appendChild(mathjaxUpdateScript);
 
   document.body.classList.add('markdown-body');
@@ -89,6 +93,6 @@ function render(text) {
       prevText = data;
       render(data);
     };
-    xhr.send(null);
+    xhr.send();
   }, 1000);
 })();

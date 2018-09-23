@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const production = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/main.ts',
 
   output: {
     path: `${__dirname}/dist/js`,
@@ -22,8 +22,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        use: 'babel-loader',
+        test: /\.tsx?$/,
+        use: 'ts-loader',
         exclude: /node_modules/
       },
       {
@@ -34,5 +34,9 @@ module.exports = {
         ]
       }
     ]
+  },
+
+  resolve: {
+    extensions: ['.js', '.ts', '.tsx']
   }
 };
