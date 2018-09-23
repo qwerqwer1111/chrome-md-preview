@@ -35,8 +35,7 @@ function render(text) {
       if (lang && hljs.getLanguage(lang)) {
         try {
           return hljs.highlight(lang, str).value;
-        } catch (__) {
-        }
+        } catch (__) {}
       }
       return '';
     }
@@ -44,52 +43,52 @@ function render(text) {
     .use(new MarkdownItMathjax())
     .use(MarkdownItTaskLists);
 
-  $(document.body).html(md.render(text));
+  document.body.innerHTML = md.render(text);
   document.body.dispatchEvent(new CustomEvent('MarkdownUpdated'));
 }
 
 (() => {
-  $('<script>')
-    .attr('type', 'text/x-mathjax-config')
-    .html(`MathJax.Hub.Config(${JSON.stringify(MATHJAX_CONFIG)});`)
-    .appendTo($(document.head));
+  const mathjaxConfigScript = document.createElement('script');
+  mathjaxConfigScript.setAttribute('type', 'text/x-mathjax-config');
+  mathjaxConfigScript.innerHTML = `MathJax.Hub.Config(${JSON.stringify(MATHJAX_CONFIG)});`;
+  document.head.appendChild(mathjaxConfigScript);
 
-  $('<script>')
-    .attr('type', 'text/javascript')
-    .attr('src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'))
-    .appendTo($(document.head));
+  const mathjaxScript = document.createElement('script');
+  mathjaxScript.setAttribute('type', 'text/javascript');
+  mathjaxScript.setAttribute(
+    'src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'));
+  document.head.appendChild(mathjaxScript);
 
   const enqueueFn = () => {
     document.body.addEventListener('MarkdownUpdated', () => {
-      if ((typeof window.MathJax !== 'undefined')
-        && (typeof window.MathJax.Hub !== 'undefined')) {
-        window.MathJax.Hub.Queue([
-          'Typeset',
-          window.MathJax.Hub,
-          document.body
-        ]);
+      if (typeof window.MathJax !== 'undefined' && typeof window.MathJax.Hub !== 'undefined') {
+        window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, document.body]);
       }
     });
   };
 
-  $('<script>')
-    .attr('type', 'text/javascript')
-    .html(`(${enqueueFn.toString()})()`)
-    .appendTo($(document.head));
+  const mathjaxUpdateScript = document.createElement('script');
+  mathjaxUpdateScript.setAttribute('type', 'text/javascript');
+  mathjaxUpdateScript.innerHTML = `(${enqueueFn.toString()})();`;
+  document.head.appendChild(mathjaxUpdateScript);
 
-  $(document.body).addClass('markdown-body');
+  document.body.classList.add('markdown-body');
 
-  let prevText = $(document.body).text();
+  let prevText = document.body.innerText;
 
   render(prevText);
 
   setInterval(() => {
-    $.get(location.href, data => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', location.href, true);
+    xhr.onload = () => {
+      const data = xhr.responseText;
       if (prevText === data) {
         return;
       }
       prevText = data;
       render(data);
-    });
+    };
+    xhr.send(null);
   }, 1000);
 })();
