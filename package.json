@@ -2,12 +2,15 @@
   "name": "chrome-md-preview",
   "version": "0.0.1",
   "scripts": {
-    "build": "webpack --colors --progress --mode development"
+    "build": "webpack --colors --progress --mode development",
+    "build:production": "cross-env NODE_ENV=production webpack --colors --progress --mode production"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
+    "copy-webpack-plugin": "^4.5.2",
+    "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "style-loader": "^0.23.0",
     "webpack": "^4.19.1",
