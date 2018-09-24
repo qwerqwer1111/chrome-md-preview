@@ -1,8 +1,8 @@
-import * as MarkdownIt from 'markdown-it';
 import * as hljs from 'highlight.js';
+import * as MarkdownIt from 'markdown-it';
 import './main.css';
 
-const MATHJAX_CONFIG = {
+const MATH_JAX_CONFIG: MathJax.Config = {
   showMathMenu: false,
   showProcessingMessages: false,
   messageStyle: 'none',
@@ -46,18 +46,18 @@ function render(text: string): void {
 }
 
 (() => {
-  const mathjaxConfigScript = document.createElement('script');
-  mathjaxConfigScript.setAttribute('type', 'text/x-mathjax-config');
-  mathjaxConfigScript.innerHTML = `MathJax.Hub.Config(${JSON.stringify(MATHJAX_CONFIG)});`;
-  document.head.appendChild(mathjaxConfigScript);
+  const mathJaxConfigScript = document.createElement('script');
+  mathJaxConfigScript.setAttribute('type', 'text/x-mathjax-config');
+  mathJaxConfigScript.innerHTML = `MathJax.Hub.Config(${JSON.stringify(MATH_JAX_CONFIG)});`;
+  document.head.appendChild(mathJaxConfigScript);
 
-  const mathjaxScript = document.createElement('script');
-  mathjaxScript.setAttribute('type', 'text/javascript');
-  mathjaxScript.setAttribute(
+  const mathJaxScript = document.createElement('script');
+  mathJaxScript.setAttribute('type', 'text/javascript');
+  mathJaxScript.setAttribute(
     'src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'));
-  document.head.appendChild(mathjaxScript);
+  document.head.appendChild(mathJaxScript);
 
-  const mathjaxQueueFn = () => {
+  const mathJaxQueueFn = () => {
     document.body.addEventListener('MarkdownUpdated', () => {
       if (typeof window.MathJax !== 'undefined' && typeof window.MathJax.Hub !== 'undefined') {
         window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, document.body]);
@@ -65,10 +65,10 @@ function render(text: string): void {
     });
   };
 
-  const mathjaxUpdateScript = document.createElement('script');
-  mathjaxUpdateScript.setAttribute('type', 'text/javascript');
-  mathjaxUpdateScript.innerHTML = `(${mathjaxQueueFn.toString()})();`;
-  document.head.appendChild(mathjaxUpdateScript);
+  const mathJaxUpdateScript = document.createElement('script');
+  mathJaxUpdateScript.setAttribute('type', 'text/javascript');
+  mathJaxUpdateScript.innerHTML = `(${mathJaxQueueFn.toString()})();`;
+  document.head.appendChild(mathJaxUpdateScript);
 
   document.body.classList.add('markdown-body');
 
