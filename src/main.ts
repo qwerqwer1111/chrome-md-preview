@@ -23,6 +23,41 @@ const MATH_JAX_CONFIG: MathJax.Config = {
   }
 };
 
+interface Attribute {
+  qualifiedName: string;
+  value: string;
+}
+
+class ElementBuilder {
+  private tagName: string;
+  private attributes: Attribute[];
+  private innerHTML?: string;
+
+  constructor(tagName: string) {
+    this.tagName = tagName;
+    this.attributes = [];
+  }
+
+  addAttribute(qualifiedName: string, value: string): ElementBuilder {
+    this.attributes.push({ qualifiedName, value });
+    return this;
+  }
+
+  withInnerHTML(innerHTML: string): ElementBuilder {
+    this.innerHTML = innerHTML;
+    return this;
+  }
+
+  appendTo(node: Node) {
+    const e = document.createElement(this.tagName);
+    this.attributes.forEach(a => e.setAttribute(a.qualifiedName, a.value));
+    if (this.innerHTML) {
+      e.innerText = this.innerHTML;
+    }
+    node.appendChild(e);
+  }
+}
+
 function render(text: string): void {
   const options: MarkdownIt.Options = {
     html: true,
@@ -46,16 +81,16 @@ function render(text: string): void {
 }
 
 (() => {
-  const mathJaxConfigScript = document.createElement('script');
-  mathJaxConfigScript.setAttribute('type', 'text/x-mathjax-config');
-  mathJaxConfigScript.innerHTML = `MathJax.Hub.Config(${JSON.stringify(MATH_JAX_CONFIG)});`;
-  document.head.appendChild(mathJaxConfigScript);
+  new ElementBuilder('script')
+    .addAttribute('type', 'text/x-mathjax-config')
+    .withInnerHTML(`MathJax.Hub.Config(${JSON.stringify(MATH_JAX_CONFIG)});`)
+    .appendTo(document.head);
 
-  const mathJaxScript = document.createElement('script');
-  mathJaxScript.setAttribute('type', 'text/javascript');
-  mathJaxScript.setAttribute(
-    'src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'));
-  document.head.appendChild(mathJaxScript);
+  new ElementBuilder('script')
+    .addAttribute('type', 'text/javascript')
+    .addAttribute(
+      'src', chrome.extension.getURL('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'))
+    .appendTo(document.head);
 
   const mathJaxQueueFn = () => {
     document.body.addEventListener('MarkdownUpdated', () => {
@@ -65,10 +100,10 @@ function render(text: string): void {
     });
   };
 
-  const mathJaxUpdateScript = document.createElement('script');
-  mathJaxUpdateScript.setAttribute('type', 'text/javascript');
-  mathJaxUpdateScript.innerHTML = `(${mathJaxQueueFn.toString()})();`;
-  document.head.appendChild(mathJaxUpdateScript);
+  new ElementBuilder('script')
+    .addAttribute('type', 'text/javascript')
+    .withInnerHTML(`(${mathJaxQueueFn.toString()})();`)
+    .appendTo(document.head);
 
   document.body.classList.add('markdown-body');
 
