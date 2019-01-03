@@ -6,6 +6,8 @@ const MATH_JAX_CONFIG: MathJax.Config = {
   showMathMenu: false,
   showProcessingMessages: false,
   messageStyle: 'none',
+  displayAlign: 'left',
+  displayIndent: '2em',
   tex2jax: {
     inlineMath: [
       ['\\(', '\\)']
