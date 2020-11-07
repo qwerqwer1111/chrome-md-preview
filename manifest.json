@@ -5,15 +5,8 @@
   "description": "chrome-md-preview",
   "content_scripts": [
     {
-      "matches": [
-        "file://*/*.md*"
-      ],
-      "js": [
-        "js/bundle.js"
-      ]
+      "matches": ["file://*/*.md*"],
+      "js": ["bundle.js"]
     }
-  ],
-  "web_accessible_resources": [
-    "js/mathjax/*"
   ]
 }

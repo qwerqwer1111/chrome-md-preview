@@ -1,39 +1,38 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const production = process.env.NODE_ENV === 'production';
-
 module.exports = {
-  entry: './src/main.ts',
-
+  entry: './src/main.js',
   output: {
-    path: `${__dirname}/dist/js`,
-    filename: 'bundle.js'
+    path: `${__dirname}/dist`,
+    filename: 'bundle.js',
   },
-
   plugins: [
-    new CopyWebpackPlugin([
-      { from: 'node_modules/mathjax', to: `${__dirname}/dist/js/mathjax` },
-      { from: 'manifest.json', to: `${__dirname}/dist/manifest.json` }
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'manifest.json', to: `${__dirname}/dist/manifest.json` },
+      ],
+    }),
   ],
-
-  devtool: production ? false : 'inline-source-map',
-
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+          },
+        },
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(gif|png|jpg|eot|wof|woff|woff2|ttf|svg)$/,
+        type: 'asset/inline',
+      },
+    ],
   },
-
-  resolve: {
-    extensions: ['.js', '.ts', '.tsx']
-  }
 };
