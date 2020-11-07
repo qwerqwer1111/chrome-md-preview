@@ -1,8 +1,11 @@
-import * as hljs from 'highlight.js';
-import * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
+import taskLists from 'markdown-it-task-lists';
+import katex from 'katex';
+import texmath from 'markdown-it-texmath';
 import './main.css';
 
-const option = {
+const options = {
   html: true,
   linkify: true,
   highlight: (str, lang) => {
@@ -15,12 +18,10 @@ const option = {
   },
 };
 
-const md = new MarkdownIt(option)
-  .use(require('markdown-it-task-lists'))
-  .use(require('markdown-it-texmath'), {
-    engine: require('katex'),
-    delimiters: 'dollars',
-  });
+const md = new MarkdownIt(options).use(taskLists).use(texmath, {
+  engine: katex,
+  delimiters: 'dollars',
+});
 
 (() => {
   document.body.classList.add('markdown-body');
