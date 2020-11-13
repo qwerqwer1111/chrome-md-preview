@@ -28,16 +28,12 @@ const md = new MarkdownIt(options).use(taskLists).use(texmath, {
   let prev = document.body.innerText;
   document.body.innerHTML = md.render(prev);
   setInterval(() => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', location.href, true);
-    xhr.onload = () => {
-      const text = xhr.responseText;
-      if (prev === text) {
+    chrome.runtime.sendMessage({ href: location.href }, (response) => {
+      if (prev === response.text) {
         return;
       }
-      prev = text;
-      document.body.innerHTML = md.render(text);
-    };
-    xhr.send();
+      prev = response.text;
+      document.body.innerHTML = md.render(response.text);
+    });
   }, 1000);
 })();
