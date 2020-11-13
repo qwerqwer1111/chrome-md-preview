@@ -3,7 +3,7 @@ import hljs from 'highlight.js';
 import taskLists from 'markdown-it-task-lists';
 import katex from 'katex';
 import texmath from 'markdown-it-texmath';
-import './main.css';
+import './content.css';
 
 const options = {
   html: true,
