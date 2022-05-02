@@ -1,4 +1,5 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -37,6 +38,15 @@ module.exports = {
         test: /\.(gif|png|jpg|eot|wof|woff|woff2|ttf|svg)$/,
         type: 'asset/inline',
       },
+    ],
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          output: { ascii_only: true },
+        },
+      }),
     ],
   },
 };
