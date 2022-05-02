@@ -1,7 +1,7 @@
 {
   "name": "chrome-md-preview",
   "version": "0.0.1",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "description": "chrome-md-preview",
   "content_scripts": [
     {
@@ -10,7 +10,6 @@
     }
   ],
   "background": {
-    "scripts": ["background.bundle.js"],
-    "persistent": false
+    "service_worker": "service_worker.bundle.js"
   }
 }

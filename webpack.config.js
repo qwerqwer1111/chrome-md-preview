@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     content: './src/content.js',
-    background: './src/background.js',
+    service_worker: './src/service_worker.js',
   },
   output: {
     path: `${__dirname}/dist`,
