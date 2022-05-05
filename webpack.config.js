@@ -1,3 +1,4 @@
+const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -7,13 +8,16 @@ module.exports = {
     service_worker: './src/service_worker.js',
   },
   output: {
-    path: `${__dirname}/dist`,
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
   },
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'manifest.json', to: `${__dirname}/dist/manifest.json` },
+        {
+          from: 'manifest.json',
+          to: path.resolve(__dirname, 'dist', 'manifest.json'),
+        },
       ],
     }),
   ],
