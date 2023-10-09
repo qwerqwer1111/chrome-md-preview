@@ -23,7 +23,8 @@
     "katex": "^0.16.9",
     "markdown-it": "^13.0.2",
     "markdown-it-task-lists": "^2.1.1",
-    "markdown-it-texmath": "^1.0.0"
+    "markdown-it-texmath": "^1.0.0",
+    "mermaid": "^10.5.0"
   },
   "private": true
 }
